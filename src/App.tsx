@@ -93,6 +93,15 @@ function Confetti({ emojis, trigger }: { emojis: string[]; trigger: number }) {
 // ───────────── Equation card ─────────────
 const TILTS = [-1.4, 0.9, -0.6, 1.2];
 
+function Glyph({ emoji, solved }: { emoji: string; solved: number | undefined }) {
+  return (
+    <span className={`eq-glyph ${solved != null ? 'is-solved' : ''}`}>
+      <span className="eq-emoji">{emoji}</span>
+      {solved != null && <span className="eq-solved-num">{solved}</span>}
+    </span>
+  );
+}
+
 function EquationCard({
   row,
   idx,
@@ -118,11 +127,16 @@ function EquationCard({
         <div className="eq-parts">
           {row.parts.map((p, i) => {
             if (p.kind === 'op') return <span key={i} className="eq-op">{p.val}</span>;
+            if (p.kind === 'emoji') {
+              return <Glyph key={i} emoji={p.val} solved={solvedMap[p.val]} />;
+            }
+            // group: render `count` adjacent glyphs without operators between them
             const solved = solvedMap[p.val];
             return (
-              <span key={i} className={`eq-glyph ${solved != null ? 'is-solved' : ''}`}>
-                <span className="eq-emoji">{p.val}</span>
-                {solved != null && <span className="eq-solved-num">{solved}</span>}
+              <span key={i} className="eq-group" data-count={p.count}>
+                {Array.from({ length: p.count }).map((_, j) => (
+                  <Glyph key={j} emoji={p.val} solved={solved} />
+                ))}
               </span>
             );
           })}
@@ -256,9 +270,14 @@ export default function App() {
   const hint: Hint = useMemo(() => {
     if (!settings.showHints) return null;
     for (const row of puzzle.rows) {
+      // Hint logic only handles pure-addition rows.
+      const hasNonAdd = row.parts.some((p) => p.kind === 'op' && p.val !== '+');
+      if (hasNonAdd) continue;
+
       const counts: Record<string, number> = {};
       row.parts.forEach((p) => {
         if (p.kind === 'emoji') counts[p.val] = (counts[p.val] ?? 0) + 1;
+        if (p.kind === 'group') counts[p.val] = (counts[p.val] ?? 0) + p.count;
       });
       const emojis = Object.keys(counts);
       if (emojis.length === 1) {
