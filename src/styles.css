@@ -312,7 +312,7 @@ html[data-theme='arcade'] .eq-group .eq-emoji {
   font-family: 'Instrument Serif', serif;
   font-size: 30px;
   font-style: italic;
-  color: var(--tomato);
+  color: var(--leaf);
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
@@ -356,7 +356,7 @@ html[data-theme='arcade'] .eq-group .eq-emoji {
   justify-content: center;
   font-family: "Instrument Serif", serif;
   font-size: 30px;
-  color: var(--tomato);
+  color: var(--leaf);
   font-style: italic;
   animation: numIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
