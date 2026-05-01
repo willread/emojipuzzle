@@ -127,8 +127,28 @@ function EquationCard({
         <div className="eq-parts">
           {row.parts.map((p, i) => {
             if (p.kind === 'op') return <span key={i} className="eq-op">{p.val}</span>;
+            if (p.kind === 'paren') return <span key={i} className="eq-paren">{p.val}</span>;
             if (p.kind === 'emoji') {
               return <Glyph key={i} emoji={p.val} solved={solvedMap[p.val]} />;
+            }
+            if (p.kind === 'pow') {
+              const solved = solvedMap[p.val];
+              if (solved != null) {
+                return (
+                  <span key={i} className="eq-pow-solved">
+                    <span className="eq-group-num">
+                      {solved}
+                      <sup className="eq-exp">{p.exp}</sup>
+                    </span>
+                  </span>
+                );
+              }
+              return (
+                <span key={i} className="eq-glyph eq-pow">
+                  <span className="eq-emoji">{p.val}</span>
+                  <sup className="eq-exp">{p.exp}</sup>
+                </span>
+              );
             }
             // group: stacked emojis, collapses to `count × value` when solved
             const solved = solvedMap[p.val];
@@ -439,9 +459,6 @@ export default function App() {
             </svg>
           </div>
         </div>
-        <p className="tagline">
-          Emoji math. No accounts. Free forever. <span className="tag-spark">∞</span> puzzles.
-        </p>
       </header>
 
       <main className="board">

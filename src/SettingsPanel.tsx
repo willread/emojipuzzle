@@ -22,6 +22,7 @@ const DIFFICULTIES: { value: Difficulty; label: string }[] = [
   { value: 1, label: 'Easy' },
   { value: 2, label: 'Medium' },
   { value: 3, label: 'Hard' },
+  { value: 4, label: 'Expert' },
 ];
 
 export default function SettingsPanel({

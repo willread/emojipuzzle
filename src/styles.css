@@ -331,6 +331,37 @@ html[data-theme='arcade'] .eq-group .eq-emoji {
   color: var(--ink-faint);
   font-weight: 400;
 }
+
+/* Parens in equations */
+.eq-paren {
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 30px;
+  font-weight: 400;
+  padding: 0 1px;
+}
+
+/* Exponents */
+.eq-pow {
+  position: relative;
+}
+.eq-exp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-left: 1px;
+  position: relative;
+  top: -0.5em;
+  vertical-align: baseline;
+}
+.eq-pow-solved {
+  display: inline-flex;
+  align-items: baseline;
+}
+.eq-pow-solved .eq-exp {
+  color: var(--leaf);
+}
 .eq-glyph.is-solved { animation: solvedPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes solvedPop {
   0% { transform: scale(1); }
@@ -740,6 +771,7 @@ html[data-theme='arcade'] .eq-group .eq-emoji {
 }
 .settings-seg-btn {
   flex: 1;
+  min-width: 0;
   appearance: none;
   border: 0;
   background: transparent;
@@ -751,6 +783,9 @@ html[data-theme='arcade'] .eq-group .eq-emoji {
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .settings-seg-btn:hover { color: var(--ink); }
 .settings-seg-btn.is-on {
