@@ -1,4 +1,4 @@
-export type EmojiSetKey = 'fruit' | 'animals' | 'weather' | 'party';
+export type EmojiSetKey = 'fruit' | 'animals' | 'weather' | 'party' | 'gross';
 export type Difficulty = 1 | 2 | 3;
 
 export type Part =
@@ -20,6 +20,7 @@ export const EMOJI_SETS: Record<EmojiSetKey, string[]> = {
   animals: ['🐶', '🐱', '🦊', '🐰', '🐻', '🐼'],
   weather: ['☀️', '🌧️', '⛈️', '🌈', '❄️', '⭐'],
   party:   ['🎈', '🎁', '🎂', '🎉', '🎀', '🍭'],
+  gross:   ['🚽', '💩', '🪱', '🪳', '🤮', '🐀'],
 };
 
 export const LOGO_EMOJI: Record<EmojiSetKey, string> = {
@@ -27,6 +28,7 @@ export const LOGO_EMOJI: Record<EmojiSetKey, string> = {
   animals: '🐸',
   weather: '🌞',
   party:   '🎈',
+  gross:   '🤮',
 };
 
 export const SET_NOUN: Record<EmojiSetKey, string> = {
@@ -34,6 +36,7 @@ export const SET_NOUN: Record<EmojiSetKey, string> = {
   animals: 'creature',
   weather: 'sky thing',
   party:   'treat',
+  gross:   'gross thing',
 };
 
 function rand(min: number, max: number) {

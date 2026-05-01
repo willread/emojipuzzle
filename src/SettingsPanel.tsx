@@ -18,6 +18,7 @@ const EMOJI_SETS: { value: EmojiSetKey; label: string }[] = [
   { value: 'animals', label: '🦊 Animals' },
   { value: 'weather', label: '☀️ Weather' },
   { value: 'party', label: '🎈 Party' },
+  { value: 'gross', label: '🤮 Gross' },
 ];
 
 const DIFFICULTIES: { value: Difficulty; label: string }[] = [
