@@ -1,55 +1,106 @@
+export type EmojiSetKey = 'fruit' | 'animals' | 'weather' | 'party';
+export type Difficulty = 1 | 2 | 3;
+
+export type Part =
+  | { kind: 'op'; val: '+' | '×' | '−' }
+  | { kind: 'emoji'; val: string };
+
+export type Row = { parts: Part[]; answer: number };
+
 export type Puzzle = {
-  emojis: [string, string, string];
-  equations: string[];
-  finalExpression: string;
-  solution: Record<string, number>;
-  answer: number;
+  emojis: Record<string, number>;
+  emojiOrder: [string, string, string];
+  rows: Row[];
+  finalRow: Row;
+  seed: number;
 };
 
-const EMOJI_POOL = [
-  '🍎', '🍌', '🥥', '🍓', '🍇', '🍊', '🍋', '🍉',
-  '🥑', '🍒', '🥝', '🍍', '🥕', '🌽', '🍄', '🍑',
-];
+export const EMOJI_SETS: Record<EmojiSetKey, string[]> = {
+  fruit:   ['🍎', '🍋', '🍉', '🍓', '🍇', '🍑'],
+  animals: ['🐶', '🐱', '🦊', '🐰', '🐻', '🐼'],
+  weather: ['☀️', '🌧️', '⛈️', '🌈', '❄️', '⭐'],
+  party:   ['🎈', '🎁', '🎂', '🎉', '🎀', '🍭'],
+};
 
-function pick<T>(arr: T[], n: number): T[] {
-  const copy = [...arr];
-  const out: T[] = [];
-  for (let i = 0; i < n; i++) {
-    const idx = Math.floor(Math.random() * copy.length);
-    out.push(copy.splice(idx, 1)[0]);
-  }
-  return out;
-}
+export const LOGO_EMOJI: Record<EmojiSetKey, string> = {
+  fruit:   '🍊',
+  animals: '🐸',
+  weather: '🌞',
+  party:   '🎈',
+};
 
-function randInt(min: number, max: number) {
+export const SET_NOUN: Record<EmojiSetKey, string> = {
+  fruit:   'fruit',
+  animals: 'creature',
+  weather: 'sky thing',
+  party:   'treat',
+};
+
+function rand(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-export function generatePuzzle(): Puzzle {
-  const [a, b, c] = pick(EMOJI_POOL, 3) as [string, string, string];
-  const A = randInt(2, 9);
-  const B = randInt(2, 9);
-  const C = randInt(1, 9);
-
-  const k1 = randInt(2, 4);
-  const k2 = randInt(2, 4);
-
-  const eq1 = `${repeat(a, k1, ' + ')} = ${k1 * A}`;
-  const eq2 = `${a} + ${repeat(b, k2, ' + ')} = ${A + k2 * B}`;
-  const eq3 = `${b} ${C >= B ? '+' : '−'} ${c} = ${C >= B ? B + C : B - C}`;
-
-  const finalExpression = `${c} + ${b} × ${a}`;
-  const answer = C + B * A;
-
-  return {
-    emojis: [a, b, c],
-    equations: [eq1, eq2, eq3],
-    finalExpression,
-    solution: { [a]: A, [b]: B, [c]: C },
-    answer,
-  };
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5);
 }
 
-function repeat(s: string, n: number, sep: string) {
-  return Array(n).fill(s).join(sep);
+export function generatePuzzle(setKey: EmojiSetKey = 'fruit', difficulty: Difficulty = 2): Puzzle {
+  const pool = shuffle(EMOJI_SETS[setKey]).slice(0, 3) as [string, string, string];
+  const [A, B, C] = pool;
+
+  const maxVal = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12;
+  const a = rand(2, maxVal);
+  const b = rand(2, maxVal);
+  const c = rand(1, Math.max(3, maxVal - 4));
+
+  const n1 = difficulty === 1 ? 3 : 4;
+  const n2 = difficulty === 1 ? 4 : 5;
+
+  const row1Parts: Part[] = [];
+  for (let i = 0; i < n1; i++) {
+    if (i > 0) row1Parts.push({ kind: 'op', val: '+' });
+    row1Parts.push({ kind: 'emoji', val: A });
+  }
+  const row1: Row = { parts: row1Parts, answer: a * n1 };
+
+  const row2Parts: Part[] = [{ kind: 'emoji', val: A }];
+  for (let i = 0; i < n2 - 1; i++) {
+    row2Parts.push({ kind: 'op', val: '+' });
+    row2Parts.push({ kind: 'emoji', val: B });
+  }
+  const row2: Row = { parts: row2Parts, answer: a + (n2 - 1) * b };
+
+  const row3: Row = {
+    parts: [
+      { kind: 'emoji', val: B },
+      { kind: 'op', val: '+' },
+      { kind: 'emoji', val: C },
+    ],
+    answer: b + c,
+  };
+
+  const useMul = difficulty >= 2;
+  const finalParts: Part[] = useMul
+    ? [
+        { kind: 'emoji', val: C },
+        { kind: 'op', val: '+' },
+        { kind: 'emoji', val: B },
+        { kind: 'op', val: '×' },
+        { kind: 'emoji', val: A },
+      ]
+    : [
+        { kind: 'emoji', val: C },
+        { kind: 'op', val: '+' },
+        { kind: 'emoji', val: B },
+        { kind: 'op', val: '+' },
+        { kind: 'emoji', val: A },
+      ];
+  const finalAnswer = useMul ? c + b * a : c + b + a;
+
+  return {
+    emojis: { [A]: a, [B]: b, [C]: c },
+    emojiOrder: [A, B, C],
+    rows: [row1, row2, row3],
+    finalRow: { parts: finalParts, answer: finalAnswer },
+    seed: Date.now(),
+  };
 }
