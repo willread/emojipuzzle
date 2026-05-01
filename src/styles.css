@@ -327,6 +327,10 @@ html[data-theme='arcade'] .eq-group .eq-emoji {
   top: -0.15em;
   margin: 0 1px;
 }
+.eq-group-paren {
+  color: var(--ink-faint);
+  font-weight: 400;
+}
 .eq-glyph.is-solved { animation: solvedPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes solvedPop {
   0% { transform: scale(1); }

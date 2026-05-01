@@ -136,9 +136,11 @@ function EquationCard({
               return (
                 <span key={i} className="eq-group is-solved">
                   <span className="eq-group-num">
+                    <span className="eq-group-paren">(</span>
                     {p.count}
                     <span className="eq-group-x">×</span>
                     {solved}
+                    <span className="eq-group-paren">)</span>
                   </span>
                 </span>
               );
