@@ -1,4 +1,3 @@
-export type EmojiSetKey = 'fruit' | 'animals' | 'weather' | 'party' | 'gross';
 export type Difficulty = 1 | 2 | 3;
 
 export type Part =
@@ -15,30 +14,6 @@ export type Puzzle = {
   seed: number;
 };
 
-export const EMOJI_SETS: Record<EmojiSetKey, string[]> = {
-  fruit:   ['🍎', '🍋', '🍉', '🍓', '🍇', '🍑'],
-  animals: ['🐶', '🐱', '🦊', '🐰', '🐻', '🐼'],
-  weather: ['☀️', '🌧️', '⛈️', '🌈', '❄️', '⭐'],
-  party:   ['🎈', '🎁', '🎂', '🎉', '🎀', '🍭'],
-  gross:   ['🚽', '💩', '🪱', '🪳', '🤮', '🐀'],
-};
-
-export const LOGO_EMOJI: Record<EmojiSetKey, string> = {
-  fruit:   '🍊',
-  animals: '🐸',
-  weather: '🌞',
-  party:   '🎈',
-  gross:   '🤮',
-};
-
-export const SET_NOUN: Record<EmojiSetKey, string> = {
-  fruit:   'fruit',
-  animals: 'creature',
-  weather: 'sky thing',
-  party:   'treat',
-  gross:   'gross thing',
-};
-
 function rand(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -46,8 +21,8 @@ function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
-export function generatePuzzle(setKey: EmojiSetKey = 'fruit', difficulty: Difficulty = 2): Puzzle {
-  const pool = shuffle(EMOJI_SETS[setKey]).slice(0, 3) as [string, string, string];
+export function generatePuzzle(emojiPool: string[], difficulty: Difficulty = 2): Puzzle {
+  const pool = shuffle(emojiPool).slice(0, 3) as [string, string, string];
   const [A, B, C] = pool;
 
   const maxVal = difficulty === 1 ? 6 : difficulty === 2 ? 9 : 12;

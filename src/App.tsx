@@ -1,13 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  generatePuzzle,
-  LOGO_EMOJI,
-  SET_NOUN,
-  type Puzzle,
-  type Row,
-} from './puzzle';
+import { generatePuzzle, type Puzzle, type Row } from './puzzle';
 import SettingsPanel from './SettingsPanel';
-import { useSettings } from './settings';
+import CreateSetModal from './CreateSetModal';
+import { setFavicon, useSettings } from './settings';
+import { BUILTIN_SETS, useCustomSets, type EmojiSet } from './sets';
 
 const WIN_PHRASES = [
   'Beautiful.',
@@ -219,9 +215,15 @@ function FeedbackLine({
 // ───────────── App ─────────────
 export default function App() {
   const [settings, updateSetting] = useSettings();
+  const { customSets, allSets, createSet, deleteSet, getSet } = useCustomSets();
+
+  // Resolve the active set, falling back to fruit if missing (e.g. a deleted custom)
+  const activeSet: EmojiSet = getSet(settings.emojiSetId) ?? BUILTIN_SETS[0];
+
   const [puzzle, setPuzzle] = useState<Puzzle>(() =>
-    generatePuzzle(settings.emojiSet, settings.difficulty),
+    generatePuzzle(activeSet.emojis, settings.difficulty),
   );
+  const [createOpen, setCreateOpen] = useState(false);
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [finalAnswer, setFinalAnswer] = useState('');
   const [statuses, setStatuses] = useState<Record<string, Status>>({});
@@ -341,17 +343,29 @@ export default function App() {
   function newPuzzle() {
     setTornOff(true);
     setTimeout(() => {
-      setPuzzle(generatePuzzle(settings.emojiSet, settings.difficulty));
+      setPuzzle(generatePuzzle(activeSet.emojis, settings.difficulty));
       resetBoard();
       setTornOff(false);
     }, 380);
   }
 
-  // Regenerate when emoji set or difficulty changes
+  // Regenerate when active set or difficulty changes
   useEffect(() => {
-    setPuzzle(generatePuzzle(settings.emojiSet, settings.difficulty));
+    setPuzzle(generatePuzzle(activeSet.emojis, settings.difficulty));
     resetBoard();
-  }, [settings.emojiSet, settings.difficulty, resetBoard]);
+  }, [activeSet.id, settings.difficulty, resetBoard, activeSet.emojis]);
+
+  // Sync favicon to active set's logo
+  useEffect(() => {
+    setFavicon(activeSet.logo);
+  }, [activeSet.logo]);
+
+  // If the user deletes the currently selected custom set, fall back to fruit
+  useEffect(() => {
+    if (!getSet(settings.emojiSetId)) {
+      updateSetting('emojiSetId', 'fruit');
+    }
+  }, [settings.emojiSetId, getSet, updateSetting]);
 
   function applyHint() {
     if (!hint) return;
@@ -362,13 +376,28 @@ export default function App() {
   return (
     <div className={`app ${shake ? 'is-shake' : ''} ${tornOff ? 'is-tearing' : ''}`}>
       <Confetti emojis={puzzle.emojiOrder} trigger={confettiTrigger} />
-      <SettingsPanel settings={settings} onChange={updateSetting} />
+      <SettingsPanel
+        settings={settings}
+        onChange={updateSetting}
+        allSets={allSets}
+        customSets={customSets}
+        onCreateSet={() => setCreateOpen(true)}
+        onDeleteSet={deleteSet}
+      />
+      <CreateSetModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreate={(input) => {
+          const id = createSet(input);
+          updateSetting('emojiSetId', id);
+        }}
+      />
 
       <header className="masthead">
         <div className="logo-wrap">
           <h1 className="logo">
             <span>em</span>
-            <span className="logo-emoji">{LOGO_EMOJI[settings.emojiSet]}</span>
+            <span className="logo-emoji">{activeSet.logo}</span>
             <span>ji</span>
             <span className="logo-puzzle">puzzle</span>
           </h1>
@@ -405,7 +434,7 @@ export default function App() {
 
         <section className="solver">
           <h2 className="solver-title">
-            Solve for each <em>{SET_NOUN[settings.emojiSet]}</em>
+            Solve for each <em>{activeSet.noun}</em>
           </h2>
 
           <div className="solve-grid">

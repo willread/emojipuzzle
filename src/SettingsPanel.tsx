@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Difficulty, EmojiSetKey } from './puzzle';
+import type { Difficulty } from './puzzle';
 import type { Settings, Theme } from './settings';
+import type { EmojiSet } from './sets';
 
 type Props = {
   settings: Settings;
   onChange: <K extends keyof Settings>(key: K, val: Settings[K]) => void;
+  allSets: EmojiSet[];
+  customSets: EmojiSet[];
+  onCreateSet: () => void;
+  onDeleteSet: (id: string) => void;
 };
 
 const THEMES: { value: Theme; label: string }[] = [
@@ -13,21 +18,20 @@ const THEMES: { value: Theme; label: string }[] = [
   { value: 'arcade', label: 'Arcade' },
 ];
 
-const EMOJI_SETS: { value: EmojiSetKey; label: string }[] = [
-  { value: 'fruit', label: '🍎 Fruit' },
-  { value: 'animals', label: '🦊 Animals' },
-  { value: 'weather', label: '☀️ Weather' },
-  { value: 'party', label: '🎈 Party' },
-  { value: 'gross', label: '🤮 Gross' },
-];
-
 const DIFFICULTIES: { value: Difficulty; label: string }[] = [
   { value: 1, label: 'Easy' },
   { value: 2, label: 'Medium' },
   { value: 3, label: 'Hard' },
 ];
 
-export default function SettingsPanel({ settings, onChange }: Props) {
+export default function SettingsPanel({
+  settings,
+  onChange,
+  allSets,
+  customSets,
+  onCreateSet,
+  onDeleteSet,
+}: Props) {
   const [open, setOpen] = useState(false);
   const popRef = useRef<HTMLDivElement>(null);
 
@@ -74,15 +78,52 @@ export default function SettingsPanel({ settings, onChange }: Props) {
           <Section title="Emoji set">
             <select
               className="settings-select"
-              value={settings.emojiSet}
-              onChange={(e) => onChange('emojiSet', e.target.value as EmojiSetKey)}
+              value={settings.emojiSetId}
+              onChange={(e) => onChange('emojiSetId', e.target.value)}
             >
-              {EMOJI_SETS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
+              <optgroup label="Built-in">
+                {allSets.filter((s) => s.builtin).map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.logo} {s.name}
+                  </option>
+                ))}
+              </optgroup>
+              {customSets.length > 0 && (
+                <optgroup label="Custom">
+                  {customSets.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.logo} {s.name}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
+
+            {customSets.length > 0 && (
+              <ul className="custom-set-list">
+                {customSets.map((s) => (
+                  <li key={s.id} className="custom-set-row">
+                    <span className="custom-set-emojis" aria-hidden="true">
+                      {s.emojis.join(' ')}
+                    </span>
+                    <span className="custom-set-name">{s.name}</span>
+                    <button
+                      className="custom-set-del"
+                      aria-label={`Delete ${s.name}`}
+                      onClick={() => {
+                        if (confirm(`Delete "${s.name}"?`)) onDeleteSet(s.id);
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <button className="settings-link" onClick={onCreateSet}>
+              + Create set
+            </button>
           </Section>
 
           <Section title="Difficulty">
