@@ -279,17 +279,54 @@ html[data-theme="midnight"] .eq-mystery {
   justify-content: center;
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-/* Stacked emojis: tight cluster, no spacing or operator between them. */
+/* Stacked emojis — fanned/layered with drop-shadow so they read as a deck. */
 .eq-group {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0;
-  padding: 2px 4px;
-  border-radius: 6px;
-  background: color-mix(in oklch, var(--lemon) 14%, transparent);
+  padding: 2px 6px;
 }
-.eq-group .eq-glyph + .eq-glyph { margin-left: -6px; }
+.eq-group .eq-glyph {
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.eq-group .eq-glyph + .eq-glyph { margin-left: -14px; }
+.eq-group .eq-emoji {
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.28));
+}
+html[data-theme='midnight'] .eq-group .eq-emoji,
+html[data-theme='arcade'] .eq-group .eq-emoji {
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.55));
+}
+.eq-group .eq-glyph:nth-child(1) { transform: rotate(-7deg) translateY(2px); z-index: 1; }
+.eq-group .eq-glyph:nth-child(2) { transform: rotate(0deg) translateY(-2px); z-index: 2; }
+.eq-group .eq-glyph:nth-child(3) { transform: rotate(7deg) translateY(2px); z-index: 3; }
+.eq-group .eq-glyph:nth-child(4) { transform: rotate(-3deg) translateY(0); z-index: 4; }
+
+/* Solved: collapse the whole stack into a single "count × value" badge. */
+.eq-group.is-solved {
+  padding: 0;
+}
+.eq-group-num {
+  font-family: 'Instrument Serif', serif;
+  font-size: 30px;
+  font-style: italic;
+  color: var(--tomato);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  animation: numIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.eq-group-x {
+  font-style: normal;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55em;
+  color: var(--ink-faint);
+  position: relative;
+  top: -0.15em;
+  margin: 0 1px;
+}
 .eq-glyph.is-solved { animation: solvedPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes solvedPop {
   0% { transform: scale(1); }
@@ -326,7 +363,7 @@ html[data-theme="midnight"] .eq-mystery {
 .eq-op {
   color: var(--ink-faint);
   font-weight: 400;
-  font-size: 18px;
+  font-size: 26px;
   padding: 0 2px;
 }
 .eq-eq {
@@ -1013,6 +1050,7 @@ html[data-theme='arcade'] .settings-select {
   .app { padding: 44px 16px 60px; }
   .eq-card { padding: 14px 16px; }
   .eq-parts { font-size: 18px; gap: 6px; }
+  .eq-op { font-size: 22px; }
   .eq-emoji,
   .eq-solved-num,
   .eq-answer { font-size: 26px; }

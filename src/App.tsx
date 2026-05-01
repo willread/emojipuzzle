@@ -130,12 +130,23 @@ function EquationCard({
             if (p.kind === 'emoji') {
               return <Glyph key={i} emoji={p.val} solved={solvedMap[p.val]} />;
             }
-            // group: render `count` adjacent glyphs without operators between them
+            // group: stacked emojis, collapses to `count × value` when solved
             const solved = solvedMap[p.val];
+            if (solved != null) {
+              return (
+                <span key={i} className="eq-group is-solved">
+                  <span className="eq-group-num">
+                    {p.count}
+                    <span className="eq-group-x">×</span>
+                    {solved}
+                  </span>
+                </span>
+              );
+            }
             return (
               <span key={i} className="eq-group" data-count={p.count}>
                 {Array.from({ length: p.count }).map((_, j) => (
-                  <Glyph key={j} emoji={p.val} solved={solved} />
+                  <Glyph key={j} emoji={p.val} solved={undefined} />
                 ))}
               </span>
             );
