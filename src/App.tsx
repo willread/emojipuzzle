@@ -3,15 +3,11 @@ import {
   generatePuzzle,
   LOGO_EMOJI,
   SET_NOUN,
-  type Difficulty,
-  type EmojiSetKey,
   type Puzzle,
   type Row,
 } from './puzzle';
-
-const EMOJI_SET: EmojiSetKey = 'fruit';
-const DIFFICULTY: Difficulty = 2;
-const SHOW_HINTS = true;
+import SettingsPanel from './SettingsPanel';
+import { useSettings } from './settings';
 
 const WIN_PHRASES = [
   'Beautiful.',
@@ -222,7 +218,10 @@ function FeedbackLine({
 
 // ───────────── App ─────────────
 export default function App() {
-  const [puzzle, setPuzzle] = useState<Puzzle>(() => generatePuzzle(EMOJI_SET, DIFFICULTY));
+  const [settings, updateSetting] = useSettings();
+  const [puzzle, setPuzzle] = useState<Puzzle>(() =>
+    generatePuzzle(settings.emojiSet, settings.difficulty),
+  );
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [finalAnswer, setFinalAnswer] = useState('');
   const [statuses, setStatuses] = useState<Record<string, Status>>({});
@@ -253,7 +252,7 @@ export default function App() {
   }, [statuses, puzzle]);
 
   const hint: Hint = useMemo(() => {
-    if (!SHOW_HINTS) return null;
+    if (!settings.showHints) return null;
     for (const row of puzzle.rows) {
       const counts: Record<string, number> = {};
       row.parts.forEach((p) => {
@@ -279,7 +278,7 @@ export default function App() {
       }
     }
     return null;
-  }, [puzzle, statuses]);
+  }, [puzzle, statuses, settings.showHints]);
 
   function handleInput(emoji: string, val: string) {
     setInputs((s) => ({ ...s, [emoji]: val }));
@@ -342,11 +341,17 @@ export default function App() {
   function newPuzzle() {
     setTornOff(true);
     setTimeout(() => {
-      setPuzzle(generatePuzzle(EMOJI_SET, DIFFICULTY));
+      setPuzzle(generatePuzzle(settings.emojiSet, settings.difficulty));
       resetBoard();
       setTornOff(false);
     }, 380);
   }
+
+  // Regenerate when emoji set or difficulty changes
+  useEffect(() => {
+    setPuzzle(generatePuzzle(settings.emojiSet, settings.difficulty));
+    resetBoard();
+  }, [settings.emojiSet, settings.difficulty, resetBoard]);
 
   function applyHint() {
     if (!hint) return;
@@ -357,12 +362,13 @@ export default function App() {
   return (
     <div className={`app ${shake ? 'is-shake' : ''} ${tornOff ? 'is-tearing' : ''}`}>
       <Confetti emojis={puzzle.emojiOrder} trigger={confettiTrigger} />
+      <SettingsPanel settings={settings} onChange={updateSetting} />
 
       <header className="masthead">
         <div className="logo-wrap">
           <h1 className="logo">
             <span>em</span>
-            <span className="logo-emoji">{LOGO_EMOJI[EMOJI_SET]}</span>
+            <span className="logo-emoji">{LOGO_EMOJI[settings.emojiSet]}</span>
             <span>ji</span>
             <span className="logo-puzzle">puzzle</span>
           </h1>
@@ -399,7 +405,7 @@ export default function App() {
 
         <section className="solver">
           <h2 className="solver-title">
-            Solve for each <em>{SET_NOUN[EMOJI_SET]}</em>
+            Solve for each <em>{SET_NOUN[settings.emojiSet]}</em>
           </h2>
 
           <div className="solve-grid">
