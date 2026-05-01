@@ -1,0 +1,153 @@
+:root {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  display: grid;
+  place-items: start center;
+  min-height: 100vh;
+  background: #fafafa;
+}
+
+@media (prefers-color-scheme: dark) {
+  body { background: #161616; color: #f0f0f0; }
+}
+
+.app {
+  width: min(560px, 92vw);
+  padding: 2rem 0 4rem;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.25rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.7;
+  margin: 1.5rem 0 0.75rem;
+}
+
+.tagline {
+  margin: 0.25rem 0 2rem;
+  opacity: 0.7;
+}
+
+.puzzle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+}
+
+.equation {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.equation.final {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  background: rgba(255, 200, 0, 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  .equation { background: rgba(255, 255, 255, 0.06); }
+}
+
+.inputs {
+  margin-top: 1.5rem;
+}
+
+.guess-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.guess {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.guess .emoji { width: 2rem; text-align: right; }
+.guess .equals { opacity: 0.5; }
+
+.guess input {
+  width: 6rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 1.25rem;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  background: white;
+  color: inherit;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .guess input {
+    background: #222;
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.guess input.ok { border-color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
+.guess input.bad { border-color: #e74c3c; background: rgba(231, 76, 60, 0.1); }
+
+.final-guess {
+  margin-top: 1rem;
+}
+.final-guess .emoji { font-size: 1.25rem; opacity: 0.6; }
+
+.actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+button {
+  padding: 0.625rem 1.25rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #111;
+  color: white;
+  cursor: pointer;
+}
+button.secondary {
+  background: transparent;
+  color: inherit;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+}
+@media (prefers-color-scheme: dark) {
+  button { background: #f0f0f0; color: #111; }
+  button.secondary { background: transparent; color: inherit; border-color: rgba(255, 255, 255, 0.2); }
+}
+
+.win {
+  margin-top: 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2ecc71;
+}
+.hint {
+  margin-top: 1.25rem;
+  opacity: 0.7;
+}
+
+footer {
+  margin-top: 2.5rem;
+  font-size: 0.875rem;
+  opacity: 0.6;
+}
