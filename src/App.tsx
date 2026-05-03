@@ -11,10 +11,10 @@ const WIN_PHRASES = [
   'Crisp.',
   "That's the one.",
   'Look at you go.',
-  'Solved like it owed you money.',
+  'Solved it!',
 ];
 const ENCOURAGEMENT = [
-  'Almost — check the trickiest one.',
+  'Almost - check the trickiest one.',
   "So close. One number's playing hard to get.",
   'Worth another look.',
   'Reverse-engineer from the easy row.',

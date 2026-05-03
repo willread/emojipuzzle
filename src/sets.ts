@@ -15,7 +15,7 @@ export const BUILTIN_SETS: EmojiSet[] = [
     name: 'Fruit',
     logo: '🍊',
     noun: 'fruit',
-    emojis: ['🍎', '🍋', '🍉', '🍓', '🍇', '🍑'],
+    emojis: ['🍎', '🍋', '🍉', '🍓', '🍇', '🍐'],
     builtin: true,
   },
   {
@@ -47,7 +47,7 @@ export const BUILTIN_SETS: EmojiSet[] = [
     name: 'Gross',
     logo: '🤮',
     noun: 'gross thing',
-    emojis: ['🚽', '💩', '🪱', '🪳', '🤮', '🐀'],
+    emojis: ['🚽', '🦠', '🪱', '🪳', '🤮', '🐀'],
     builtin: true,
   },
 ];
